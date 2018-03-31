@@ -7,7 +7,10 @@ For help getting started with Flutter, view our online
 
 # Making HTTP Networking Requests in Flutter 
 
-A new Flutter application.
+An application which has a listview populated with data from a JSON response.
 
 ## Getting Started
-An application which has a listview populated with data from a JSON response.
+1) Making HTTP requests.
+2) Dealing with asynchronousy.
+3) Decoding JSON.
+4) Update the view with relevent information.
