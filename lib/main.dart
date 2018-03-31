@@ -3,11 +3,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:httprequest/NetworkUtils.dart';
 
 void main() => runApp(new MyApp());
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+  // This widget i  s the root of your application.
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
@@ -49,6 +50,8 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   List data;
 
+  var subscription;
+
   Future<String> getData() async {
     var response = await http.get(
         Uri.encodeFull("https://api.github.com/users"),
@@ -62,9 +65,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    this.getData();
+    var connectivityResult = new Connectivity().checkConnectivity();
+    if (connectivityResult != ConnectivityResult.none) {
+      this.getData();
+    }
   }
-
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
