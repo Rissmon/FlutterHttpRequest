@@ -1,0 +1,14 @@
+.DS_Store
+.atom/
+.dart_tool/
+.idea
+.vscode/
+.packages
+.pub/
+build/
+ios/.generated/
+packages
+.flutter-plugins
+
+.idea/instapk.xml
+instapk.log*
