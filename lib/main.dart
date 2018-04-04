@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:httprequest/NetworkUtils.dart';
 
 void main() => runApp(new MyApp());
 
@@ -49,15 +49,42 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List data;
-
+  bool _progressBarActive = true;
   var subscription;
 
+  Future<Null> _neverSatisfied() async {
+    return showDialog<Null>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      child: new AlertDialog(
+        title: new Text('No network connection.'),
+        content: new SingleChildScrollView(
+          child: new ListBody(
+            children: <Widget>[
+              new Text('Your network connection seems to be disabled'),
+            ],
+          ),
+        ),
+        actions: <Widget>[
+          new FlatButton(
+            child: new Text('Ok'),
+            onPressed: () => exit(0),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// You need to use a FutureBuilder.
+  /// Add your async function in the future argument otherwise the
+  /// build method gets called before the data are obtained.
   Future<String> getData() async {
     var response = await http.get(
         Uri.encodeFull("https://api.github.com/users"),
         headers: {"Accept": "application/json"});
 
     this.setState(() {
+      _progressBarActive = false;
       data = json.decode(response.body);
     });
     return "Success!";
@@ -65,18 +92,24 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void initState() {
-    var connectivityResult = new Connectivity().checkConnectivity();
-    if (connectivityResult != ConnectivityResult.none) {
-      this.getData();
-    }
+/*    var connectivityResult = new Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {*/
+    this.getData();
+    /* } else {
+      _neverSatisfied();
+    }*/
   }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
         title: new Text("Listviews"),
       ),
-      body: new ListView.builder(
+      body: _progressBarActive == true
+          ? new Center(child: const CircularProgressIndicator())
+          : new ListView.builder(
         itemCount: data == null ? 0 : data.length,
         itemBuilder: (BuildContext context, int position) {
           return new ListTile(
